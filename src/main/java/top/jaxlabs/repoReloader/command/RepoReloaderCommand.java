@@ -143,6 +143,6 @@ public final class RepoReloaderCommand implements CommandExecutor, TabCompleter 
     }
 
     private void runAsync(Runnable task) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
+        plugin.getServer().getAsyncScheduler().runNow(plugin, scheduledTask -> task.run());
     }
 }

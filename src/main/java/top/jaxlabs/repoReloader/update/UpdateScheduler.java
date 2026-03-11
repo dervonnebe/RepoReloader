@@ -1,16 +1,16 @@
 package top.jaxlabs.repoReloader.update;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import top.jaxlabs.repoReloader.model.RepositoryEntry;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Schedules a separate repeating task for each {@link RepositoryEntry}.
- * Each entry uses its own {@code check-interval-minutes}, which allows
- * high-priority repos to be polled more frequently than others.
+ * Schedules a separate repeating async task for each {@link RepositoryEntry}
+ * using Folia's {@code AsyncScheduler} (also works on Paper/Spigot).
+ * Each entry uses its own {@code check-interval-minutes}.
  */
 public final class UpdateScheduler {
 
@@ -31,14 +31,13 @@ public final class UpdateScheduler {
     }
 
     private void scheduleOne(RepositoryEntry entry) {
-        long intervalTicks = entry.checkIntervalMinutes() * 60L * 20L;
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checker.check(entry);
-            }
-        }.runTaskTimerAsynchronously(plugin, 20L, intervalTicks);
+        plugin.getServer().getAsyncScheduler().runAtFixedRate(
+                plugin,
+                scheduledTask -> checker.check(entry),
+                1L,
+                entry.checkIntervalMinutes(),
+                TimeUnit.MINUTES
+        );
 
         logger.info("Scheduled check for " + entry.key() + " every " + entry.checkIntervalMinutes() + " min.");
     }

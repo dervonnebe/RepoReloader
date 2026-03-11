@@ -9,7 +9,7 @@ import top.jaxlabs.repoReloader.permission.PluginPermission;
 /**
  * Broadcasts a {@link Component} message to all online players who hold
  * the {@link PluginPermission#ADMIN_UPDATES} permission.
- * Scheduling is done on the main thread to satisfy Bukkit's thread requirements.
+ * Uses Folia's {@code GlobalRegionScheduler} to ensure thread-safe player access.
  */
 public final class AdminNotifier {
 
@@ -20,7 +20,7 @@ public final class AdminNotifier {
     }
 
     public void notifyAdmins(Component message) {
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        Bukkit.getGlobalRegionScheduler().run(plugin, scheduledTask -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission(PluginPermission.ADMIN_UPDATES.node())) {
                     player.sendMessage(message);
