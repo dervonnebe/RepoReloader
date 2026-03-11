@@ -4,14 +4,14 @@ package top.jaxlabs.repoReloader.message;
  * All player-facing messages. Config path and MiniMessage default template per key.
  *
  * Available placeholders per message:
- *  UPDATE_FOUND        – {repo}, {old}, {new}, {file}
- *  DOWNLOAD_FAILED     – {repo}, {error}
- *  CMD_CHECK_ALL       – {count}
- *  CMD_CHECK_ONE       – {repo}
- *  CMD_REPO_NOT_FOUND  – {repo}
- *  CMD_NOT_INITIALIZED – (none)
- *  CMD_NO_PERMISSION   – (none)
- *  CMD_USAGE           – (none)
+ *  UPDATE_FOUND        - {repo}, {old}, {new}, {file}
+ *  DOWNLOAD_FAILED     - {repo}, {error}
+ *  CMD_CHECK_ALL       - {count}
+ *  CMD_CHECK_ONE       - {repo}
+ *  CMD_REPO_NOT_FOUND  - {repo}
+ *  CMD_NOT_INITIALIZED - (none)
+ *  CMD_NO_PERMISSION   - (none)
+ *  CMD_USAGE           - (none)
  */
 public enum MessageKey {
 
@@ -19,7 +19,7 @@ public enum MessageKey {
             "messages.update-found",
             "<green>[RepoReloader]</green> Update für <aqua>{repo}</aqua> gefunden"
                     + " (<red>{old}</red> <gray>→</gray> <green>{new}</green>)"
-                    + " – <yellow>{file}</yellow> heruntergeladen. Neustart erforderlich."
+                    + " - <yellow>{file}</yellow> heruntergeladen. Neustart erforderlich."
     ),
     DOWNLOAD_FAILED(
             "messages.download-failed",

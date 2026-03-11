@@ -12,6 +12,7 @@ import top.jaxlabs.repoReloader.update.UpdateChecker;
 import top.jaxlabs.repoReloader.update.UpdateScheduler;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,38 +26,46 @@ public final class RepoReloader extends JavaPlugin {
         MessageFormatter messageFormatter = new MessageFormatter(getConfig());
 
         UpdateChecker checker = null;
-        List<RepositoryEntry> repositories = List.of();
+        List<RepositoryEntry> activeRepositories = List.of();
 
         if (!pluginConfig.hasToken()) {
-            getLogger().warning("github-token is empty – update checks disabled. See config.yml for instructions.");
-        } else if (pluginConfig.repositories().isEmpty()) {
-            getLogger().warning("No repositories configured under 'repositories'.");
+            getLogger().warning("github-token is empty - update checks disabled. See config.yml for instructions.");
         } else {
-            repositories = pluginConfig.repositories();
+            List<RepositoryEntry> all = new ArrayList<>(pluginConfig.repositories());
+            pluginConfig.selfUpdateEntry().ifPresent(entry -> {
+                all.add(entry);
+                getLogger().info("Self-update enabled - watching dervonnebe/RepoReloader.");
+            });
 
-            Path pluginsDir = getDataFolder().toPath().getParent() != null
-                    ? getDataFolder().toPath().getParent()
-                    : Path.of("plugins");
+            if (all.isEmpty()) {
+                getLogger().warning("No repositories configured and self-update is disabled.");
+            } else {
+                activeRepositories = List.copyOf(all);
 
-            GitHubClient gitHubClient = new GitHubClient(pluginConfig.githubToken());
-            AdminNotifier notifier = new AdminNotifier(this);
-            PendingUpdateRecorder recorder = new PendingUpdateRecorder(getDataFolder().toPath(), getLogger());
+                Path pluginsDir = getDataFolder().toPath().getParent() != null
+                        ? getDataFolder().toPath().getParent()
+                        : Path.of("plugins");
 
-            checker = new UpdateChecker(
-                    gitHubClient,
-                    recorder,
-                    notifier,
-                    messageFormatter,
-                    getLogger(),
-                    pluginsDir,
-                    getPluginMeta().getVersion()
-            );
+                GitHubClient gitHubClient = new GitHubClient(pluginConfig.githubToken());
+                AdminNotifier notifier = new AdminNotifier(this);
+                PendingUpdateRecorder recorder = new PendingUpdateRecorder(getDataFolder().toPath(), getLogger());
 
-            new UpdateScheduler(this, checker).scheduleAll(repositories);
-            getLogger().info("RepoReloader started – watching " + repositories.size() + " repositories.");
+                checker = new UpdateChecker(
+                        gitHubClient,
+                        recorder,
+                        notifier,
+                        messageFormatter,
+                        getLogger(),
+                        pluginsDir,
+                        getPluginMeta().getVersion()
+                );
+
+                new UpdateScheduler(this, checker).scheduleAll(activeRepositories);
+                getLogger().info("RepoReloader started - watching " + activeRepositories.size() + " repositories.");
+            }
         }
 
-        RepoReloaderCommand rrCommand = new RepoReloaderCommand(this, checker, repositories, messageFormatter);
+        RepoReloaderCommand rrCommand = new RepoReloaderCommand(this, checker, activeRepositories, messageFormatter);
         Objects.requireNonNull(getCommand("rr")).setExecutor(rrCommand);
         Objects.requireNonNull(getCommand("rr")).setTabCompleter(rrCommand);
     }

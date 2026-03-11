@@ -1,5 +1,5 @@
 # =============================================================
-#  RepoReloader – Konfiguration
+#  RepoReloader - Konfiguration
 # =============================================================
 
 # GitHub Personal Access Token
@@ -20,6 +20,20 @@ github-token: ""
 # Wie oft nach neuen Releases gesucht wird (in Minuten).
 # Kann pro Repository individuell ueberschrieben werden (siehe unten).
 check-interval-minutes: 30
+
+# =============================================================
+#  Self-Update
+# =============================================================
+# RepoReloader kann sich selbst aktualisieren.
+# Muss explizit aktiviert werden (enabled: true).
+# Voraussetzung: github-token muss gesetzt sein.
+#
+# owner/repo koennen angepasst werden, falls du einen Fork verwendest.
+self-update:
+  enabled: false
+  owner: "dervonnebe"
+  repo: "RepoReloader"
+  # check-interval-minutes: 60   # optional, sonst gilt das globale Intervall
 
 # =============================================================
 #  Nachrichten (MiniMessage-Format)

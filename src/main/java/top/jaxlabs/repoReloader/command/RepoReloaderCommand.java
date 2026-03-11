@@ -21,8 +21,8 @@ import java.util.Optional;
  * Handles the {@code /rr} command.
  *
  * <pre>
- *   /rr check              – force-checks all configured repositories immediately
- *   /rr check owner/repo   – force-checks a single repository
+ *   /rr check              - force-checks all configured repositories immediately
+ *   /rr check owner/repo   - force-checks a single repository
  * </pre>
  *
  * Each check runs asynchronously so it never blocks the main thread.

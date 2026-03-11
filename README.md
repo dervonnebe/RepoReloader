@@ -1,6 +1,6 @@
 # RepoReloader
 
-Überwacht GitHub-Releases und lädt neue Plugin-Versionen automatisch herunter – kein manuelles Kopieren mehr.
+Überwacht GitHub-Releases und lädt neue Plugin-Versionen automatisch herunter - kein manuelles Kopieren mehr.
 
 ---
 

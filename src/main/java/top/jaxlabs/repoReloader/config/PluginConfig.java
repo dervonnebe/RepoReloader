@@ -6,6 +6,7 @@ import top.jaxlabs.repoReloader.model.RepositoryEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -15,14 +16,19 @@ import java.util.logging.Logger;
  */
 public final class PluginConfig {
 
+    private static final String SELF_OWNER = "dervonnebe";
+    private static final String SELF_REPO  = "RepoReloader";
+
     private final String githubToken;
+    private final int globalInterval;
     private final List<RepositoryEntry> repositories;
+    private final Optional<RepositoryEntry> selfUpdateEntry;
 
     public PluginConfig(FileConfiguration config, Logger logger) {
-        this.githubToken = config.getString("github-token", "").trim();
-
-        int globalInterval = Math.max(1, config.getInt("check-interval-minutes", 30));
-        this.repositories = parseRepositories(config.getList("repositories"), globalInterval, logger);
+        this.githubToken   = config.getString("github-token", "").trim();
+        this.globalInterval = Math.max(1, config.getInt("check-interval-minutes", 30));
+        this.repositories  = parseRepositories(config.getList("repositories"), logger);
+        this.selfUpdateEntry = parseSelfUpdate(config);
     }
 
     public String githubToken() {
@@ -37,15 +43,34 @@ public final class PluginConfig {
         return repositories;
     }
 
-    private List<RepositoryEntry> parseRepositories(List<?> raw, int globalInterval, Logger logger) {
+    /** Present when {@code self-update.enabled: true} is set in config. */
+    public Optional<RepositoryEntry> selfUpdateEntry() {
+        return selfUpdateEntry;
+    }
+
+    // -------------------------------------------------------------------------
+
+    private Optional<RepositoryEntry> parseSelfUpdate(FileConfiguration config) {
+        if (!config.getBoolean("self-update.enabled", false)) {
+            return Optional.empty();
+        }
+
+        String owner    = config.getString("self-update.owner", SELF_OWNER).trim();
+        String repo     = config.getString("self-update.repo",  SELF_REPO).trim();
+        int    interval = Math.max(1, config.getInt("self-update.check-interval-minutes", globalInterval));
+
+        return Optional.of(new RepositoryEntry(owner, repo, SELF_REPO + ".jar", interval));
+    }
+
+    private List<RepositoryEntry> parseRepositories(List<?> raw, Logger logger) {
         if (raw == null || raw.isEmpty()) return List.of();
 
         List<RepositoryEntry> entries = new ArrayList<>();
         for (Object obj : raw) {
             if (!(obj instanceof Map<?, ?> rawMap)) continue;
 
-            String owner = stringOrEmpty(rawMap.get("owner"));
-            String repo = stringOrEmpty(rawMap.get("repo"));
+            String owner         = stringOrEmpty(rawMap.get("owner"));
+            String repo          = stringOrEmpty(rawMap.get("repo"));
             String localFilename = resolveFilename(rawMap);
 
             if (owner.isEmpty() || repo.isEmpty() || localFilename.isEmpty()) {
@@ -65,11 +90,9 @@ public final class PluginConfig {
     }
 
     /**
-     * Resolves the local JAR filename from the config entry.
-     * Accepts {@code plugin-name} (preferred, .jar appended automatically)
-     * or the legacy {@code local-filename} key as fallback.
-     * A manually provided .jar extension is always stripped and re-added
-     * so both "MyPlugin" and "MyPlugin.jar" produce the same result.
+     * Resolves the local JAR filename from a config entry.
+     * Prefers {@code plugin-name} (no extension needed) over the legacy
+     * {@code local-filename} key. A trailing {@code .jar} is always normalised.
      */
     private String resolveFilename(Map<?, ?> rawMap) {
         String name = stringOrEmpty(rawMap.get("plugin-name"));
