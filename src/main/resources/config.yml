@@ -33,8 +33,21 @@ check-interval-minutes: 30
 #   {file}   - Dateiname der heruntergeladenen .update-Datei
 #   {error}  - Fehlermeldung (nur bei download-failed verfuegbar)
 messages:
+  # Automatische Update-Benachrichtigungen (Platzhalter: {repo}, {old}, {new}, {file})
   update-found: "<green>[RepoReloader]</green> Update fuer <aqua>{repo}</aqua> gefunden (<red>{old}</red> <gray>-></gray> <green>{new}</green>) - <yellow>{file}</yellow> heruntergeladen. Neustart erforderlich."
+  # Fehler beim Download (Platzhalter: {repo}, {error})
   download-failed: "<red>[RepoReloader]</red> <white>Download fehlgeschlagen fuer <aqua>{repo}</aqua>: {error}</white>"
+
+  # Kommando-Nachrichten (/rr check)
+  # Platzhalter: {count}
+  cmd-check-all: "<green>[RepoReloader]</green> Force-Check gestartet fuer <white>{count}</white> Repositories..."
+  # Platzhalter: {repo}
+  cmd-check-one: "<green>[RepoReloader]</green> Force-Check gestartet fuer <aqua>{repo}</aqua>..."
+  # Platzhalter: {repo}
+  cmd-repo-not-found: "<red>[RepoReloader]</red> Repository <aqua>{repo}</aqua> nicht in der Konfiguration gefunden."
+  cmd-not-initialized: "<red>[RepoReloader]</red> Plugin nicht initialisiert (Token oder Repositories fehlen)."
+  cmd-no-permission: "<red>[RepoReloader]</red> Du hast keine Berechtigung fuer diesen Befehl."
+  cmd-usage: "<gray>[RepoReloader]</gray> Verwendung: <white>/rr check [owner/repo]</white>"
 
 # =============================================================
 #  Repositories

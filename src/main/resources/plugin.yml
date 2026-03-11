@@ -4,7 +4,17 @@ main: top.jaxlabs.repoReloader.RepoReloader
 api-version: '1.21'
 folia-supported: true
 authors: [ Jack F. ]
+
+commands:
+  rr:
+    description: RepoReloader admin command.
+    usage: /rr check [owner/repo]
+    permission: reporeloader.admin.force
+
 permissions:
-	reporeloader.admin.updates:
-		description: Receive notifications about available repository plugin updates.
-		default: op
+  reporeloader.admin.updates:
+    description: Receive notifications about available repository plugin updates.
+    default: op
+  reporeloader.admin.force:
+    description: Trigger an immediate update check via /rr check.
+    default: op
