@@ -147,19 +147,14 @@ jobs:
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create tag
-        if: steps.check_tag.outputs.exists == 'false'
+      - name: Create and push tag
+        if: steps.check_version.outputs.SHOULD_RELEASE == 'true' && steps.check_tag.outputs.exists == 'false'
+        shell: bash
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a ${{ steps.version.outputs.TAG }} -m "Release ${{ steps.version.outputs.TAG }}"
-
-      - name: Push tag
-        if: steps.check_tag.outputs.exists == 'false'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tags: true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.TAG }}" -m "Release ${{ steps.version.outputs.TAG }}"
+          git push origin "${{ steps.version.outputs.TAG }}"
 
       - name: Create Release
         if: steps.check_tag.outputs.exists == 'false'
