@@ -1,6 +1,10 @@
 name: RepoReloader
-version: '1.0.0'
+version: '${version}'
 main: top.jaxlabs.repoReloader.RepoReloader
 api-version: '1.21'
 folia-supported: true
 authors: [ Jack F. ]
+permissions:
+	reporeloader.admin.updates:
+		description: Receive notifications about available repository plugin updates.
+		default: op

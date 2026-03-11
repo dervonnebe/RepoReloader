@@ -1,0 +1,62 @@
+# =============================================================
+#  RepoReloader – Konfiguration
+# =============================================================
+
+# GitHub Personal Access Token
+#
+# Token erstellen unter: https://github.com/settings/tokens/new
+#
+# Benötigte Berechtigungen:
+#   Öffentliche Repos  -> kein Scope erforderlich (Token erhöht nur das Rate-Limit)
+#   Private Repos      -> "Contents" (Read-only) bei Classic Tokens
+#                        "Repository contents" (Read-only) bei Fine-grained Tokens
+#
+# Token NIEMALS ins Versions-Control einchecken!
+github-token: ""
+
+# =============================================================
+#  Globales Pruefintervall
+# =============================================================
+# Wie oft nach neuen Releases gesucht wird (in Minuten).
+# Kann pro Repository individuell ueberschrieben werden (siehe unten).
+check-interval-minutes: 30
+
+# =============================================================
+#  Nachrichten (MiniMessage-Format)
+# =============================================================
+# Dokumentation: https://docs.advntr.dev/minimessage/format.html
+#
+# Verfuegbare Platzhalter:
+#   {repo}   - owner/repo, z. B. "DeinName/GeheimesPlugin"
+#   {old}    - aktuell installierte Plugin-Version
+#   {new}    - neue Version im GitHub-Release
+#   {file}   - Dateiname der heruntergeladenen .update-Datei
+#   {error}  - Fehlermeldung (nur bei download-failed verfuegbar)
+messages:
+  update-found: "<green>[RepoReloader]</green> Update fuer <aqua>{repo}</aqua> gefunden (<red>{old}</red> <gray>-></gray> <green>{new}</green>) - <yellow>{file}</yellow> heruntergeladen. Neustart erforderlich."
+  download-failed: "<red>[RepoReloader]</red> <white>Download fehlgeschlagen fuer <aqua>{repo}</aqua>: {error}</white>"
+
+# =============================================================
+#  Repositories
+# =============================================================
+# Jeder Eintrag beschreibt ein GitHub-Repository, dessen neuesten
+# Release dieser Plugin ueberwacht und automatisch herunterlaed.
+#
+# Pflichtfelder:
+#   owner          - GitHub-Benutzername oder Organisation
+#   repo           - Repository-Name
+#   local-filename - Dateiname des JARs im plugins/-Ordner
+#
+# Optionales Feld:
+#   check-interval-minutes - Ueberschreibt das globale Intervall fuer
+#                            dieses Repository (min. 1 Minute)
+repositories:
+  - owner: "DeinName"
+    repo: "GeheimesPlugin"
+    local-filename: "GeheimesPlugin.jar"
+    # check-interval-minutes: 10
+
+  - owner: "AndererUser"
+    repo: "UtilityPlugin"
+    local-filename: "Utility.jar"
+    # check-interval-minutes: 60
