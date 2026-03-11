@@ -24,7 +24,7 @@ jobs:
       - name: Extract version from build.gradle
         id: version
         run: |
-          VERSION=$(grep "^version = " build.gradle | sed "s/version = \"\(.*\)\"/\1/")
+          VERSION=$(grep "^version" build.gradle | sed "s/.*=\s*['\"]//;s/['\"].*//")
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "TAG=v$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
@@ -44,7 +44,7 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
@@ -165,11 +165,11 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
-          files: build/libs/FarmweltPlugin-*.jar
+          files: build/libs/RepoReloader-*.jar
           tag_name: ${{ steps.version.outputs.TAG }}
-          name: FarmweltPlugin ${{ steps.version.outputs.TAG }}
+          name: RepoReloader ${{ steps.version.outputs.TAG }}
           body: |
-            # FarmweltPlugin ${{ steps.version.outputs.TAG }}
+            # RepoReloader ${{ steps.version.outputs.TAG }}
             
             ## What's New
             ${{ steps.changelog.outputs.CHANGELOG }}
