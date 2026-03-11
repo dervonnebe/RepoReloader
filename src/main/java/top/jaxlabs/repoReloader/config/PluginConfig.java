@@ -46,10 +46,10 @@ public final class PluginConfig {
 
             String owner = stringOrEmpty(rawMap.get("owner"));
             String repo = stringOrEmpty(rawMap.get("repo"));
-            String localFilename = stringOrEmpty(rawMap.get("local-filename"));
+            String localFilename = resolveFilename(rawMap);
 
             if (owner.isEmpty() || repo.isEmpty() || localFilename.isEmpty()) {
-                logger.warning("Skipping repository entry with missing owner/repo/local-filename.");
+                logger.warning("Skipping repository entry with missing owner/repo/plugin-name.");
                 continue;
             }
 
@@ -62,6 +62,26 @@ public final class PluginConfig {
             entries.add(new RepositoryEntry(owner, repo, localFilename, interval));
         }
         return List.copyOf(entries);
+    }
+
+    /**
+     * Resolves the local JAR filename from the config entry.
+     * Accepts {@code plugin-name} (preferred, .jar appended automatically)
+     * or the legacy {@code local-filename} key as fallback.
+     * A manually provided .jar extension is always stripped and re-added
+     * so both "MyPlugin" and "MyPlugin.jar" produce the same result.
+     */
+    private String resolveFilename(Map<?, ?> rawMap) {
+        String name = stringOrEmpty(rawMap.get("plugin-name"));
+        if (name.isEmpty()) {
+            name = stringOrEmpty(rawMap.get("local-filename"));
+        }
+        if (name.isEmpty()) return "";
+
+        if (name.toLowerCase().endsWith(".jar")) {
+            name = name.substring(0, name.length() - 4);
+        }
+        return name + ".jar";
     }
 
     private String stringOrEmpty(Object value) {

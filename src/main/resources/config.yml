@@ -56,9 +56,9 @@ messages:
 # Release dieser Plugin ueberwacht und automatisch herunterlaed.
 #
 # Pflichtfelder:
-#   owner          - GitHub-Benutzername oder Organisation
-#   repo           - Repository-Name
-#   local-filename - Dateiname des JARs im plugins/-Ordner
+#   owner       - GitHub-Benutzername oder Organisation
+#   repo        - Repository-Name
+#   plugin-name - Name des Plugins (ohne .jar, wird automatisch ergaenzt)
 #
 # Optionales Feld:
 #   check-interval-minutes - Ueberschreibt das globale Intervall fuer
@@ -66,10 +66,10 @@ messages:
 repositories:
   - owner: "DeinName"
     repo: "GeheimesPlugin"
-    local-filename: "GeheimesPlugin.jar"
+    plugin-name: "GeheimesPlugin"
     # check-interval-minutes: 10
 
   - owner: "AndererUser"
     repo: "UtilityPlugin"
-    local-filename: "Utility.jar"
+    plugin-name: "UtilityPlugin"
     # check-interval-minutes: 60
