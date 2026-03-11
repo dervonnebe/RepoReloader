@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'build.gradle.kts'
+      - 'build.gradle'
   workflow_dispatch:
 
 jobs:
@@ -21,10 +21,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract version from build.gradle.kts
+      - name: Extract version from build.gradle
         id: version
         run: |
-          VERSION=$(grep "^version = " build.gradle.kts | sed "s/version = \"\(.*\)\"/\1/")
+          VERSION=$(grep "^version = " build.gradle | sed "s/version = \"\(.*\)\"/\1/")
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "TAG=v$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
@@ -94,7 +94,7 @@ jobs:
             ### Actions Required
             1. Review the build errors above
             2. Fix the issues in the code
-            3. Update the version in \`build.gradle.kts\` and push again
+            3. Update the version in \`build.gradle\` and push again
 
             [View Workflow Run](${workflowUrl})
             `;
